@@ -1,0 +1,47 @@
+{% extends "layout.html"%}
+{% block main %}
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/static/styles/files.css">
+
+<div class="table-header">
+    <table cellpadding="0" cellspacing="0" border="0">
+        <thead>
+                <tr>
+                <th> Name</th>
+                <th> Modified Time</th>
+                <th>Size</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+    <div class="table-content">
+    <table cellpadding="0" cellspacing="0" border="0">
+      <tbody>
+        <tr>
+            <td>
+                <a href="{{url_for('reports',reqPath=parentPath)}}">
+                    <i class="bi bi-folder-symlink fa-2x" style="margin-right:0.3em"><span>parent Folder</span></i>
+                </a>
+            </td>
+        </tr>
+        {% for fileObj in files %}
+            <tr>
+                <td>
+                    <a href="{{url_for('reports',reqPath=fileObj['fLink'])}}">
+                    <span>
+                        <i class="{{fileObj['fIcon']}} fa-2x" style="margin-right:03.em"></i>{{ fileObj['name'] }}
+                    </span>
+                </a>
+                </td>
+                <td>{{ fileObj['mTime'] }}</td>
+                <td>{{fileObj['size'] }}</td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table> 
+    </div>
+
+{% endblock %}

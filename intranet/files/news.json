@@ -1,0 +1,14 @@
+{
+    "data":[
+        {
+            "title": "New m3 coming soon",
+            "description": "the new m3 touring with a starting price of 185,000",
+            "image": "m3touring.jpeg"
+        },
+        {
+            "title": "lotus emira out now",
+            "description": "you parked badly",
+            "image": "lotus.jpeg"
+        }
+    ]
+}

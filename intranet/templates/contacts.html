@@ -1,0 +1,104 @@
+{% extends "layout.html"%}
+{% block main %}
+<section>
+  
+  <link rel="stylesheet" href="/static/styles/contacts.css">
+  <script>
+   async function sortfname(){
+    // Get the <select> element
+      var selectElement = document.getElementById("sortFName");
+      var selectedOption = selectElement.options[selectElement.selectedIndex];
+      var selectedValue = selectedOption.value;
+      let response = await fetch('/sortcontactFN?q='+selectedValue);
+      let contacts = await response.text();
+      document.querySelector('tbody').innerHTML = contacts;
+    }
+    async function sortlname(){
+    // Get the <select> element
+      var selectElement = document.getElementById("sortLName");
+      var selectedOption = selectElement.options[selectElement.selectedIndex];
+      var selectedValue = selectedOption.value;
+      let response = await fetch('/sortcontactLN?q='+selectedValue);
+      let contacts = await response.text();
+      document.querySelector('tbody').innerHTML = contacts;
+    }
+  </script>
+
+    <!--for demo wrap-->
+    <input placeholder="Query" type="search">
+    <div class="table-header">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <thead>
+          <tr>
+            <th>First Name
+              <select onchange="sortfname()" name="sortFName" id="sortFName" style="background-color:white">
+                <option value="ASC"selected="selected">ASC</option>
+                <option value="DECS">DESC</option>
+              </select>
+            </th>
+            <th>Last Name
+              <select onchange="sortlname()" name="sortLName" id="sortLName" style="background-color:white">
+                <option value="" disabled selected>OrderBy</option>
+                <option value="ASC">ASC</option>
+                <option value="DECS">DESC</option>
+              </select>
+            </th>
+            <th>Department</th>
+            <th>Email</th>
+            <th>phone number</th>
+            {% if session["user_id"] %}
+                <th></th>
+            {% endif %}
+          </tr>
+        </thead>
+      </table>
+    </div>
+
+    <!-- <div class="tbl-content"> -->
+      <div class="table-content">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tbody>
+            {% for contact in contacts %}
+            <tr>
+                <td>{{ contact.name }}</td>
+                <td>{{ contact.surname }}</td>
+                <td>{{ contact.department }}</td>
+                <td>{{ contact.email }}</td>
+                <td>{{ contact.number }}</td>
+                {% if session["user_id"] %}
+                <td><a href="{{ url_for('deletecontact',index=contact.id) }}">delete</a></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+      {% if session["user_id"] %}
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#Model-delete-all-contacts">
+        DELETE ALL
+      </button>
+      {% endif %}
+    </div>
+<!-- Modal delte all -->
+  <div class="modal fade" id="Model-delete-all-contacts" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h2>ARE YOU SURE YOU WANT TO DELETE ALL CONTACTS</h2>
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="window.location.href='{{ url_for('deleteallcontacts') }}';">Delete All</button>
+      </div>
+    </div>
+  </div>
+  </section>
+  <script>
+    let input = document.querySelector('input');
+    input.addEventListener('input',async function(){
+        let response = await fetch('/search?q=' + input.value);
+        let contacts = await response.text();
+        document.querySelector('tbody').innerHTML = contacts;
+    })
+</script>
+{% endblock %}
+

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Intranet</title>
+	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/styles/layout.css">
+</head>
+<body>
+
+<div class="holder">
+
+    <div class="sidebar">
+        <h2>{{title}}</h2>
+        
+        <ul>
+            <li><a href="/"><i class="fas fa-home"></i>Home</a></li>
+            <li><a href="/reports"><i class="fas fa-address-card"></i>Documents</a></li>
+            <li><a href="/staff-contacts"><img src="/static/doc.png" alt="doc-logo">Staff Contacts</a></li>
+            {% if session["user_id"] %}
+            <li><a href="#Model-contact" data-toggle="modal">Add a Contact</a></li>
+            <li><a href="#Model-link" data-toggle="modal">Add a Link</a></li>
+            <li><a href="/logout"><i class="fas fa-address-card"></i>Log Out</a></li>
+            {% else %}
+            <li><a href="#Model-login" data-toggle="modal">Login</a></li>
+          {% endif %}
+        </ul>
+    </div>
+
+
+    <div class="maintemp">
+      
+      <div class="info">
+            {% block main %}
+            {% endblock %}
+      </div>
+    </div>
+    <div class="sidebar" id="sidebar-two">
+      <h2>Links</h2>
+      <ul>
+        {% if session["user_id"] %}
+          {% for link in links %}
+          <li><a href="{{ link.linkurl }}"></i>{{link.name}}</a><a href="{{ url_for('delete',index=loop.index0) }}">delete</a></li>
+          {% endfor %}
+        {% else %}
+          {% for link in links %}
+            <li><a href="{{ link.linkurl }}"></i>{{link.name}}</a></li>
+          {% endfor %}
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal-contact -->
+<div class="modal fade" id="Model-contact" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add A contact</h5>
+      </div>
+      <div class="modal-body">
+        <form action="/add-contacts" method="POST">
+          <input class="form-control mx-auto w-auto" id="fname" name="fname" placeholder="First Name" type="text" style="margin-bottom:4px;" required>
+          <input class="form-control mx-auto w-auto" id="surname" name="surname" placeholder="Last Name" type="text"style="margin-bottom:4px;" required>
+          <input class="form-control mx-auto w-auto" id="department" name="department" placeholder="Department" type="text"style="margin-bottom:4px;" required>
+          <input class="form-control mx-auto w-auto" id="num" name="num" placeholder="Phone Number"style="margin-bottom:4px;" required>
+          <input class="form-control mx-auto w-auto" id="email" name="email" placeholder="Email"style="margin-bottom:4px;" required>
+          <button type="submit" value="Submit"class="btn btn-primary">Submit</button>
+        </form>
+        <!-- Code for uploading file  -->
+        <form method = "POST" enctype="multipart/form-data" action = "/upload-contacts" id="uploadForm">
+          <input class="form-control" mx-auto w-auto" type="file" name="file" accept=".csv" onchange="checkFile()">
+          <input class="form-control" type = "submit" value="Upload" id="submitBtn" disabled>
+        </form>
+        <script>
+          function checkFile() {
+              var fileInput = document.getElementById('uploadForm').elements['file'];
+              var submitBtn = document.getElementById('submitBtn');
+
+              if (fileInput.files.length > 0) {
+                  // File has been selected
+                  submitBtn.disabled = false;
+              } else {
+                  // No file selected
+                  submitBtn.disabled = true;
+              }
+          }
+      </script>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--modal login-->
+<div class="modal fade" id="Model-login" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+      </div>
+      <div class="modal-body">
+        <form action="/login" method="post">
+          <div class="mb-3" style="margin-bottom:4px;">
+              <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" placeholder="Username" type="text" required>
+          </div>
+          <div class="mb-3" style="margin-bottom:4px;">
+              <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Password" type="password" required>
+          </div>
+          <button class="btn btn-primary" type="submit">Log In</button>
+      </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Modal-link -->
+<div class="modal fade" id="Model-link" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+  <div class="modal-content">
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalLabel">Add A Link</h5>
+  </div>
+  <div class="modal-body">
+    <form action="/update-link" method="POST">
+      <input class="form-control mx-auto w-auto" id="webname" name="webname" placeholder="web site name"style="margin-bottom:4px;" required>
+      <input class="form-control mx-auto w-auto" id="webURL" name="webURL" placeholder=" Enter URL"style="margin-bottom:4px;" required>
+      <button class="btn btn-primary" type="submit">ADD Link</button>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+  </div>
+</div>
+</body>
+
+</html>

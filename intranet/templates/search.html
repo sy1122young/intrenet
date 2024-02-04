@@ -1,0 +1,10 @@
+
+{% for contact in contacts %}
+<tr>
+  <td>{{ contact["name"] }}</td>
+  <td>{{ contact["surname"] }}</td>
+  <td>{{ contact["department"] }}</td>
+  <td>{{ contact["email"] }}</td>
+  <td>{{ contact["number"] }}</td>
+</tr>
+{% endfor %}

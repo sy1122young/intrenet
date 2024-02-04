@@ -1,0 +1,118 @@
+{% extends "layout.html"%}
+
+{% block main %}
+<head>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/news.css') }}">
+</head>
+
+
+<div class="news-container">
+<!-- <div>
+    <form method=post enctype=multipart/form-data>
+        <input type=file name=file>
+        <input type=submit value=Upload>
+    </form>
+</div> -->
+        <div class="information">
+        {% for d in news %}
+            <div class="card">
+                <div class="card-image"><img src="/static/{{ d['image'] }}" style="width:300px;height:auto;"></div>
+                <div class="card-title"><h3>{{d["title"]}}</h3></div>
+                <div class="card-text">{{d["description"]}}</div>
+                <button type="button" class="btn btn-primary expand-view-btn" data-toggle="modal" data-target="#Model-expand-news" data-news="{{ d|tojson|safe }}">Expand View</button>
+
+                
+                {% if session["user_id"] %}
+                    <button class="news-button">edit</button>
+                    <button class="news-button" onclick="window.location.href='{{ url_for('deletenews',index=d["title"]) }}'">delete</button>
+                    
+                {% endif%}
+            </div>
+        {% endfor %}
+        
+        </div>  
+</div>
+
+<!-- Modal-epand view -->
+<div class="modal fade" id="Model-expand-news" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body"id="modal-content">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-bkVXQ+PiFqDm9R7YoS0ekPaJgN15I9TfKJktvqljFuc6z5JYeQk6kWbO2T9I9pX" crossorigin="anonymous"></script>
+
+<script>
+    $(document).ready(function() {
+        // Get all the "Expand View" buttons
+        $('.expand-view-btn').click(function() {
+            // Get the news data from the data attribute
+            var newsData = JSON.parse($(this).data('news'));
+
+            // Update the modal content with the news details
+            $('#modal-content').html(`
+                <h2>${newsData.title}</h2>
+                <img src="/static/${newsData.image}" style="width:100%;height:auto;">
+                <p>${newsData.description}</p>
+            `);
+
+            // Show the modal
+            $('#Model-expand-news').modal('show');
+        });
+    });
+</script>
+
+    
+
+<style>
+    .news-button{
+        border-radius:30px;
+    }
+    body{
+    background-color:white;
+    font-family: 'Roboto', sans-serif;
+    }
+    .information{
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:space-between;
+        flex-direction: row;
+        height:100%;
+    }
+    .card{
+        background-color: whitesmoke;
+        display:flex;
+        flex-direction: column;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        transition: 0.3s;
+        /* width: 250px; */
+        width: calc(33.33% - 10px);
+        max-height: 505px;
+        margin: 5px;
+        padding: 5px;
+        border-radius: 30px;
+
+    }
+    
+    .card-image,.card-title,.card-text{
+        margin:auto;
+    }
+    .card-text{
+        overflow-y: auto;
+    }
+
+</style>
+{% endblock %}
+
+
+
+
